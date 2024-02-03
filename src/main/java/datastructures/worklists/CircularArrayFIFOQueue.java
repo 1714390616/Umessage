@@ -3,49 +3,91 @@ package datastructures.worklists;
 import cse332.exceptions.NotYetImplementedException;
 import cse332.interfaces.worklists.FixedSizeFIFOWorkList;
 
+import java.util.NoSuchElementException;
+
 /**
  * See cse332/interfaces/worklists/FixedSizeFIFOWorkList.java
  * for method specifications.
  */
-public class CircularArrayFIFOQueue<E> extends FixedSizeFIFOWorkList<E> {
+public class CircularArrayFIFOQueue<E extends Comparable<E>> extends FixedSizeFIFOWorkList<E> {
+    private final int capacity;
+    private E[] array;
+    private int workSize;
+    private int front;
+    private int back;
+
     public CircularArrayFIFOQueue(int capacity) {
         super(capacity);
-        throw new NotYetImplementedException();
+        this.capacity = capacity;
+        this.array = (E[])new Comparable[capacity];
+        this.workSize = 0;
+        this.front = 0;
+        this.back = 0;
+
     }
 
     @Override
     public void add(E work) {
-        throw new NotYetImplementedException();
+        if (isFull()) {
+            throw new IllegalStateException();
+        }
+        array[back] = work;
+        back = (back + 1) % capacity;
+        workSize ++;
     }
 
     @Override
     public E peek() {
-        throw new NotYetImplementedException();
+        if (!hasWork()){
+            throw new NoSuchElementException();
+        }
+        return array[front];
     }
 
     @Override
     public E peek(int i) {
-        throw new NotYetImplementedException();
+        if (!hasWork()){
+            throw new NoSuchElementException();
+        } else if (i >= size()) {
+            throw new IndexOutOfBoundsException();
+        }
+        int index = (front + i) % capacity;
+        return array[index];
     }
 
     @Override
     public E next() {
-        throw new NotYetImplementedException();
+        if (!hasWork()){
+            throw new NoSuchElementException();
+        }
+        E result = array[front];
+        workSize --;
+        front = (front + 1) % capacity;
+        return result;
     }
 
     @Override
     public void update(int i, E value) {
-        throw new NotYetImplementedException();
+        if (!hasWork()){
+            throw new NoSuchElementException();
+        } else if (i >= size()) {
+            throw new IndexOutOfBoundsException();
+        }
+        int index = (front + i) % capacity;
+        array[index] = value;
     }
 
     @Override
     public int size() {
-        throw new NotYetImplementedException();
+        return workSize;
     }
 
     @Override
     public void clear() {
-        throw new NotYetImplementedException();
+        this.array = (E[])new Comparable[capacity];
+        this.workSize = 0;
+        this.front = 0;
+        this.back = 0;
     }
 
     @Override

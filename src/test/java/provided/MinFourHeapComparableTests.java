@@ -106,6 +106,8 @@ public class MinFourHeapComparableTests {
         for (int i = 0; i < 5; i++) {
             String str_heap = heap.next();
             String str = (char) ('a' + i) + "a";
+            System.out.println(i);
+            System.out.println(str_heap);
             assertEquals(str, str_heap);
         }
     }
