@@ -87,23 +87,20 @@ public class MoveToFrontList<K, V> extends DeletelessDictionary<K, V> {
 
     @Override
     public Iterator<Item<K, V>> iterator() {
-        return new s1mpleIterator();
+        return new MTFLIterator();
     }
 
-    private class s1mpleIterator extends SimpleIterator<Item<K, V>> {
+    private class MTFLIterator extends SimpleIterator<Item<K, V>> {
         public ListNode curr;
 
-        public s1mpleIterator() {
-            if (MoveToFrontList.this.front != null) {
-                this.curr = MoveToFrontList.this.front;
+        public MTFLIterator() {
+            if (front != null) {
+                this.curr = front;
             }
         }
 
         @Override
         public Item<K, V> next() {
-            if (curr == null) {
-                return null;
-            }
             Item<K, V> result = curr.data;
             curr = curr.next;
             return result;
@@ -111,7 +108,7 @@ public class MoveToFrontList<K, V> extends DeletelessDictionary<K, V> {
 
         @Override
         public boolean hasNext(){
-            if (curr.next != null) {
+            if (curr != null) {
                 return true;
             } else {
                 return false;
