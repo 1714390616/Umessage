@@ -47,7 +47,13 @@ public class ChainingHashTable<K, V> extends DeletelessDictionary<K, V> {
         // Check if resize needed
         if (((double)this.size / (double)hashTableSize) > 0.7) {
             primeSizeIndex ++;
-            int newSize = PRIME_SIZES[primeSizeIndex];
+            int newSize;
+            if (primeSizeIndex < PRIME_SIZES.length) {
+                newSize = PRIME_SIZES[primeSizeIndex];
+            } else {
+                newSize = 2*hashTableSize + 1;
+            }
+
 
             Dictionary<K, V>[] newHashTable = new Dictionary[newSize];
             for (int i = 0; i < hashTableSize; i++) {
