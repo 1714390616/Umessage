@@ -44,13 +44,7 @@ public class AVLTree<K extends Comparable<? super K>, V> extends BinarySearchTre
             throw new IllegalArgumentException();
         }
         V result = find(key);
-
         this.root = insert(key, value, castBSTtoAVL(this.root));
-        castBSTtoAVL(this.root).height = getHeight(castBSTtoAVL(this.root));
-        if (result == null) {
-            this.root = balance(castBSTtoAVL(this.root), key);
-        }
-
         return result;
     }
 
@@ -75,21 +69,21 @@ public class AVLTree<K extends Comparable<? super K>, V> extends BinarySearchTre
             // Trace right side
             currNode.children[1] = insert(key, newValue, castBSTtoAVL(currNode.children[1]));
         }
-        return currNode;
+        //updateHeight(currNode);
+        currNode.height = 1 + Math.max(getHeight(castBSTtoAVL(currNode.children[0])), getHeight(castBSTtoAVL(currNode.children[1])));
+
+        return balance(currNode);
     }
 
+
     // Check the balance of the AVL Tree and rotate if needed
-    private AVLNode balance(AVLNode currNode, K key) {
+    private AVLNode balance(AVLNode currNode) {
         if (currNode.height > 1) {
-            int result = key.compareTo(currNode.key);
-            // Check along the path of insertion from bottom to top
-            if (result < 0 && currNode.children[0] != null) {
-                currNode.children[0] = balance(castBSTtoAVL(currNode.children[0]), key);
-            } else if (result > 0 && currNode.children[1] != null) {
-                currNode.children[1] = balance(castBSTtoAVL(currNode.children[1]), key);
-            }
-            if (getHeight(castBSTtoAVL(currNode.children[1])) - getHeight(castBSTtoAVL(currNode.children[0])) > maxHeightDiff) {
-                if (key.compareTo(currNode.children[1].key) > 0) {
+            int result = getHeight(castBSTtoAVL(currNode.children[1])) - getHeight(castBSTtoAVL(currNode.children[0]));
+
+            if (result > maxHeightDiff) {
+                int rightResult = getHeight(castBSTtoAVL(currNode.children[1].children[1])) - getHeight(castBSTtoAVL(currNode.children[1].children[0]));
+                if (rightResult > 0) {
                     // RR case, rotate left once
                     currNode = rotateLeft(currNode);
                 } else {
@@ -97,8 +91,10 @@ public class AVLTree<K extends Comparable<? super K>, V> extends BinarySearchTre
                     currNode.children[1] = rotateRight(castBSTtoAVL(currNode.children[1]));
                     currNode = rotateLeft(currNode);
                 }
-            } else if (getHeight(castBSTtoAVL(currNode.children[0])) - getHeight(castBSTtoAVL(currNode.children[1])) > maxHeightDiff) {
-                if (key.compareTo(currNode.children[0].key) < 0) {
+            } else if (result < -maxHeightDiff) {
+                int leftResult = getHeight(castBSTtoAVL(currNode.children[0].children[1])) - getHeight(castBSTtoAVL(currNode.children[0].children[0]));
+
+                if (leftResult < 0) {
                     // LL case, rotate right once
                     currNode = rotateRight(currNode);
                 } else {
@@ -111,45 +107,42 @@ public class AVLTree<K extends Comparable<? super K>, V> extends BinarySearchTre
         return currNode;
     }
 
+    // Rotate left around the node
     private AVLNode rotateLeft(AVLNode currNode) {
-        AVLNode oldRoot = currNode;
-        AVLNode temp = null;
-        if (currNode.children[1].children[0] != null) {
-            temp = castBSTtoAVL(currNode.children[1].children[0]);
-        }
+        AVLNode RChild = castBSTtoAVL(currNode.children[1]);
+        AVLNode RLChild = castBSTtoAVL(currNode.children[1].children[0]);
+        RChild.children[0] = currNode;
+        currNode.children[1] = RLChild;
+        updateHeight(currNode);
+        updateHeight(RChild);
 
-        currNode = castBSTtoAVL(currNode.children[1]);
-        oldRoot.children[1] = null;
-        currNode.children[0] = oldRoot;
-        currNode.children[0].children[1] = temp;
-        getHeight(currNode);
-
-        return currNode;
+        return RChild;
     }
 
+    // Rotate right around the node
     private AVLNode rotateRight(AVLNode currNode) {
-        AVLNode oldRoot = currNode;
-        AVLNode temp = null;
-        if (currNode.children[0].children[1] != null) {
-            temp = castBSTtoAVL(currNode.children[0].children[1]);
-        }
+        AVLNode LChild = castBSTtoAVL(currNode.children[0]);
+        AVLNode LRChild = castBSTtoAVL(currNode.children[0].children[1]);
+        LChild.children[1] = currNode;
+        currNode.children[0] = LRChild;
+        updateHeight(currNode);
+        updateHeight(LChild);
 
-        currNode = castBSTtoAVL(currNode.children[0]);
-        oldRoot.children[0] = null;
-        currNode.children[1] = oldRoot;
-        currNode.children[1].children[0] = temp;
-        getHeight(currNode);
-
-        return currNode;
+        return LChild;
     }
 
-    // Update and return the height of current node and all nodes below it
-    public int getHeight(AVLNode currNode) {
+
+
+    // Update the height of current node
+    private void updateHeight(AVLNode currNode) {
+        currNode.height =  Math.max(getHeight(castBSTtoAVL(currNode.children[0])), getHeight(castBSTtoAVL(currNode.children[1]))) + 1;
+    }
+
+    // Return the height of current node, -1 if null
+    private int getHeight(AVLNode currNode) {
         if (currNode == null) {
-            // Base Case
             return -1;
         }
-        currNode.height =  Math.max(getHeight(castBSTtoAVL(currNode.children[0])), getHeight(castBSTtoAVL(currNode.children[1]))) + 1;
         return currNode.height;
     }
 
@@ -157,4 +150,3 @@ public class AVLTree<K extends Comparable<? super K>, V> extends BinarySearchTre
         return (AVLNode) currNode;
     }
 }
-
