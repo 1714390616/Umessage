@@ -1,12 +1,9 @@
 package datastructures.dictionaries;
 
 import cse332.datastructures.containers.Item;
-import cse332.exceptions.NotYetImplementedException;
 import cse332.interfaces.misc.DeletelessDictionary;
 import cse332.interfaces.misc.Dictionary;
 import cse332.interfaces.misc.SimpleIterator;
-import datastructures.worklists.ListFIFOQueue;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Supplier;
@@ -28,20 +25,17 @@ public class ChainingHashTable<K, V> extends DeletelessDictionary<K, V> {
     private Supplier<Dictionary<K, V>> newChain;
     private Dictionary<K, V>[] hashTable;
     private int hashTableSize;
-    private ListFIFOQueue<Integer> primeSize;
+
+    private int primeSizeIndex;
 
     static final int[] PRIME_SIZES =
             {11, 23, 47, 97, 193, 389, 773, 1549, 3089, 6173, 12347, 24697, 49393, 98779, 197573, 395147};
 
     public ChainingHashTable(Supplier<Dictionary<K, V>> newChain) {
         this.newChain = newChain;
-        this.primeSize = new ListFIFOQueue<>();
-        for (int i = 0; i < PRIME_SIZES.length; i++) {
-            primeSize.add(PRIME_SIZES[i]);
-        }
-        int newSize = primeSize.next();
-        this.hashTableSize = newSize;
-        this.hashTable = new Dictionary[newSize];
+        this.primeSizeIndex = 0;
+        this.hashTableSize = PRIME_SIZES[primeSizeIndex];
+        this.hashTable = new Dictionary[hashTableSize];
     }
 
     @Override
@@ -52,7 +46,8 @@ public class ChainingHashTable<K, V> extends DeletelessDictionary<K, V> {
 
         // Check if resize needed
         if (((double)this.size / (double)hashTableSize) > 0.7) {
-            int newSize = primeSize.next();
+            primeSizeIndex ++;
+            int newSize = PRIME_SIZES[primeSizeIndex];
 
             Dictionary<K, V>[] newHashTable = new Dictionary[newSize];
             for (int i = 0; i < hashTableSize; i++) {
