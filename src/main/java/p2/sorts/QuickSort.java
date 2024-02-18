@@ -10,6 +10,9 @@ public class QuickSort {
     }
 
     public static <E> void sort(E[] array, Comparator<E> comparator) {
+        if (array == null) {
+            throw new IllegalArgumentException();
+        }
         quickSort(array, comparator, 0, array.length - 1);
     }
 

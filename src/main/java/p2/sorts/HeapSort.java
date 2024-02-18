@@ -11,6 +11,10 @@ public class HeapSort {
     }
 
     public static <E> void sort(E[] array, Comparator<E> comparator) {
+        if (array == null) {
+            throw new IllegalArgumentException();
+        }
+
         MinFourHeap<E> minHeap = new MinFourHeap<>(comparator);
         for (E element: array) {
             minHeap.add(element);
