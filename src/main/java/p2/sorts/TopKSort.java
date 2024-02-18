@@ -13,7 +13,7 @@ public class TopKSort {
 
     public static <E> void sort(E[] array, int k, Comparator<E> comparator) {
         if (array == null || k <= 0) {
-            throw new IllegalArgumentException();
+            return;
         }
 
         k = Math.min(k, array.length);
@@ -23,7 +23,6 @@ public class TopKSort {
             minHeap.add(element);
         }
 
-        //int endIndex = array.length - 1;
         for (int i = k; i < array.length; i++) {
             minHeap.next();
             array[i] = null;
