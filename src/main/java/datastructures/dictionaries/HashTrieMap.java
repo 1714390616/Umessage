@@ -80,6 +80,11 @@ public class HashTrieMap<A extends Comparable<A>, K extends BString<A>, V> exten
         if (key == null) {
             throw new IllegalArgumentException();
         }
+
+        if (size == 0) {
+            return null;
+        }
+
         HashTrieNode currNode = (HashTrieNode) this.root;
         for (A charType: key){
             if (currNode.pointers.find(charType) == null) {
@@ -96,6 +101,11 @@ public class HashTrieMap<A extends Comparable<A>, K extends BString<A>, V> exten
         if (key == null) {
             throw new IllegalArgumentException();
         }
+
+        if (size == 0) {
+            return false;
+        }
+
         HashTrieNode currNode = (HashTrieNode) this.root;
         for (A charType: key){
             if (currNode.pointers.find(charType) == null) {

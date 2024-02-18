@@ -1,8 +1,6 @@
 package datastructures.worklists;
 
-import cse332.exceptions.NotYetImplementedException;
 import cse332.interfaces.worklists.PriorityWorkList;
-
 import java.util.Comparator;
 import java.util.NoSuchElementException;
 
