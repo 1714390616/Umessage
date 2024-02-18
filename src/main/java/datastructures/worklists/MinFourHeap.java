@@ -33,7 +33,7 @@ public class MinFourHeap<E> extends PriorityWorkList<E> {
     public void add(E work) {
         // Resize if needed
         if (size == length) {
-            E[] newArray = (E[])new Comparable[length * 2];
+            E[] newArray = (E[])new Object[length * 2];
             for (int i = 0; i < size; i++) {
                 newArray[i] = data[i];
             }
@@ -139,7 +139,7 @@ public class MinFourHeap<E> extends PriorityWorkList<E> {
 
     @Override
     public void clear() {
-        this.data = (E[])new Comparable[10];
+        this.data = (E[])new Object[10];
         this.length = 10;
         this.size = 0;
     }
