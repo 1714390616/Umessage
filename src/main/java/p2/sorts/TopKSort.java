@@ -1,8 +1,6 @@
 package p2.sorts;
 
-import cse332.exceptions.NotYetImplementedException;
 import datastructures.worklists.MinFourHeap;
-
 import java.util.Comparator;
 
 public class TopKSort {
@@ -28,7 +26,9 @@ public class TopKSort {
             array[i] = null;
         }
         for (int i = 0; i < k; i++) {
-            array[i] = minHeap.next();
+            if (minHeap.hasWork()) {
+                array[i] = minHeap.next();
+            }
         }
     }
 }
