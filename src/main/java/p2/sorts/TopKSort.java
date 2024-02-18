@@ -13,7 +13,7 @@ public class TopKSort {
 
     public static <E> void sort(E[] array, int k, Comparator<E> comparator) {
         if (array == null || k <= 0) {
-            return;
+            throw new IllegalArgumentException();
         }
 
         k = Math.min(k, array.length);
