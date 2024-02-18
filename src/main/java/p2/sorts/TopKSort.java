@@ -17,17 +17,26 @@ public class TopKSort {
         k = Math.min(k, array.length);
         MinFourHeap<E> minHeap = new MinFourHeap<>(comparator);
 
-        for (E element: array) {
-            minHeap.add(element);
+        for (int i = 0; i < k; i++) {
+            minHeap.add(array[i]);
         }
 
         for (int i = k; i < array.length; i++) {
-            minHeap.next();
-            array[i] = null;
+            E current = array[i];
+            if (comparator.compare(current, minHeap.peek()) > 0) {
+                minHeap.next();
+                minHeap.add(current);
+            }
         }
-        for (int i = 0; i < k; i++) {
-            if (minHeap.hasWork()) {
-                array[i] = minHeap.next();
+
+        int heapSize = minHeap.size();
+        for (int i = 0; i < heapSize; i++) {
+            array[i] = minHeap.next();
+        }
+
+        if (k < array.length) {
+            for (int i = heapSize; i < array.length; i++) {
+                array[i] = null;
             }
         }
     }
