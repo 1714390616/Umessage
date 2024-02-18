@@ -122,7 +122,11 @@ public class CircularArrayFIFOQueue<E extends Comparable<E>> extends FixedSizeFI
     public int hashCode() {
         int result = 37;
         for (int i = 0; i < workSize; i++) {
-            result += array[i].hashCode() * Math.pow(37,i);
+            if (array[i] == null) {
+                result += 37 * i;
+            } else {
+                result += array[i].hashCode() * 31 * i;
+            }
         }
         return result;
     }
