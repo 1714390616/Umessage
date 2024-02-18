@@ -1,12 +1,12 @@
 package datastructures.dictionaries;
 
-import cse332.exceptions.NotYetImplementedException;
+import cse332.datastructures.containers.Item;
+import cse332.interfaces.misc.SimpleIterator;
 import cse332.interfaces.trie.TrieMap;
 import cse332.types.BString;
 
-import java.util.HashMap;
+import java.util.AbstractMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
 
 /**
@@ -15,19 +15,38 @@ import java.util.Map.Entry;
  * for method specifications.
  */
 public class HashTrieMap<A extends Comparable<A>, K extends BString<A>, V> extends TrieMap<A, K, V> {
-    public class HashTrieNode extends TrieNode<Map<A, HashTrieNode>, HashTrieNode> {
+    public class HashTrieNode extends TrieNode<ChainingHashTable<A, HashTrieNode>, HashTrieNode> {
         public HashTrieNode() {
             this(null);
         }
 
         public HashTrieNode(V value) {
-            this.pointers = new HashMap<A, HashTrieNode>();
+            this.pointers = new ChainingHashTable<>(MoveToFrontList::new);
             this.value = value;
         }
 
         @Override
         public Iterator<Entry<A, HashTrieMap<A, K, V>.HashTrieNode>> iterator() {
-            return pointers.entrySet().iterator();
+            return new HTNIterator();
+        }
+
+        private class HTNIterator extends SimpleIterator<Entry<A, HashTrieNode>> {
+            private final Iterator<Item<A, HashTrieNode>> iterator;
+
+            public HTNIterator() {
+                iterator = HashTrieNode.this.pointers.iterator();
+            }
+
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public Entry<A, HashTrieMap<A, K, V>.HashTrieNode> next() {
+                Item<A, HashTrieMap<A, K, V>.HashTrieNode> item = iterator.next();
+                return new AbstractMap.SimpleEntry<>(item.key, item.value);
+            }
         }
     }
 
@@ -43,10 +62,10 @@ public class HashTrieMap<A extends Comparable<A>, K extends BString<A>, V> exten
         }
         HashTrieNode currNode = (HashTrieNode) this.root;
         for (A charType: key){
-            if (!currNode.pointers.containsKey(charType)) {
-                currNode.pointers.put(charType, new HashTrieNode());
+            if (currNode.pointers.find(charType) == null) {
+                currNode.pointers.insert(charType, new HashTrieNode());
             }
-            currNode = currNode.pointers.get(charType);
+            currNode = currNode.pointers.find(charType);
         }
         V result = currNode.value;
         if (result == null) {
@@ -63,10 +82,10 @@ public class HashTrieMap<A extends Comparable<A>, K extends BString<A>, V> exten
         }
         HashTrieNode currNode = (HashTrieNode) this.root;
         for (A charType: key){
-            if (!currNode.pointers.containsKey(charType)) {
+            if (currNode.pointers.find(charType) == null) {
                 return null;
             }
-            currNode = currNode.pointers.get(charType);
+            currNode = currNode.pointers.find(charType);
         }
         V result = currNode.value;
         return result;
@@ -79,14 +98,15 @@ public class HashTrieMap<A extends Comparable<A>, K extends BString<A>, V> exten
         }
         HashTrieNode currNode = (HashTrieNode) this.root;
         for (A charType: key){
-            if (!currNode.pointers.containsKey(charType)) {
+            if (currNode.pointers.find(charType) == null) {
                 return false;
             }
-            currNode = currNode.pointers.get(charType);
+            currNode = currNode.pointers.find(charType);
         }
         return true;
     }
 
+    /*
     @Override
     public void delete(K key) {
         if (key == null) {
@@ -124,10 +144,15 @@ public class HashTrieMap<A extends Comparable<A>, K extends BString<A>, V> exten
             }
             this.size --;
         }
+    }*/
+
+    @Override
+    public void delete(K key) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void clear() {
-        this.root = new HashTrieNode();
+        throw new UnsupportedOperationException();
     }
 }

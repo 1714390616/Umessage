@@ -41,7 +41,6 @@ public class ListFIFOQueue<E> extends FIFOWorkList<E> {
             throw new NoSuchElementException();
         }
         return front.data;
-
     }
 
     @Override

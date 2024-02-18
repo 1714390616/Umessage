@@ -1,6 +1,7 @@
 package p2.sorts;
 
 import cse332.exceptions.NotYetImplementedException;
+import datastructures.worklists.MinFourHeap;
 
 import java.util.Comparator;
 
@@ -11,6 +12,24 @@ public class TopKSort {
 
 
     public static <E> void sort(E[] array, int k, Comparator<E> comparator) {
-        throw new NotYetImplementedException();
+        if (array == null || k <= 0) {
+            throw new IllegalArgumentException();
+        }
+
+        k = Math.min(k, array.length);
+        MinFourHeap<E> minHeap = new MinFourHeap<>(comparator);
+
+        for (E element: array) {
+            minHeap.add(element);
+        }
+
+        //int endIndex = array.length - 1;
+        for (int i = k; i < array.length; i++) {
+            minHeap.next();
+            array[i] = null;
+        }
+        for (int i = 0; i < k; i++) {
+            array[i] = minHeap.next();
+        }
     }
 }
